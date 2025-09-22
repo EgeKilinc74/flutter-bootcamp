@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 class HesapMakinesi extends StatefulWidget {
   const HesapMakinesi({super.key});
 
+
+
+
   @override
   State<HesapMakinesi> createState() => _HesapMakinesiState();
 }
@@ -68,3 +71,4 @@ class _HesapMakinesiState extends State<HesapMakinesi> {
     );
   }
 }
+

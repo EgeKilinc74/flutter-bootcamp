@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kisiler_uygulamasi/data/entity/kisiler.dart';
+import 'package:kisiler_uygulamasi/ui/cubit/anasayfa_cubit.dart';
 import 'package:kisiler_uygulamasi/ui/views/detay_sayfa.dart';
 import 'package:kisiler_uygulamasi/ui/views/kayit_sayfa.dart';
 
@@ -13,23 +15,15 @@ class Anasayfa extends StatefulWidget {
 class _AnasayfaState extends State<Anasayfa> {
   bool aramaYapiliyorMu = false;
 
-  Future<void> ara(String aramaKelimesi) async{
-    print("Kişi Ara : $aramaKelimesi");
-  }
 
-  Future<void> sil(int kisi_id) async{
-    print("Kişi Sil : $kisi_id");
-  }
 
-  Future<List<Kisiler>> kisileriYukle() async{
-    var kisilerListesi = <Kisiler>[];
-    var k1 = Kisiler(kisi_id: 1, kisi_ad: "Ahmet", kisi_tel: "111");
-    var k2 = Kisiler(kisi_id: 1, kisi_ad: "Zeynep", kisi_tel: "222");
-    var k3 = Kisiler(kisi_id: 1, kisi_ad: "Beyza", kisi_tel: "333");
-    kisilerListesi.add(k1);
-    kisilerListesi.add(k2);
-    kisilerListesi.add(k3);
-    return kisilerListesi;
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    context.read<AnasayfaCubit>().kisileriYukle();
   }
 
 
@@ -40,38 +34,44 @@ class _AnasayfaState extends State<Anasayfa> {
         title: aramaYapiliyorMu ?
         TextField(decoration: const InputDecoration(hintText: "Ara"),
         onChanged: (aramaSonucu){
-          ara(aramaSonucu);
+          if(aramaSonucu.isNotEmpty) {
+            context.read<AnasayfaCubit>().ara(aramaSonucu);
+          }else{
+            context.read<AnasayfaCubit>().kisileriYukle();
+          }
         },
+
         ) :
         const Text("Kişiler"),
         actions: [
           aramaYapiliyorMu ?
           IconButton(onPressed: (){
             setState(() {
+              context.read<AnasayfaCubit>().kisileriYukle();
               aramaYapiliyorMu = false;
+
             });
           }, icon: const Icon(Icons.clear)) :
           IconButton(onPressed: (){
             setState(() {
+
               aramaYapiliyorMu = true;
             });
           }, icon: const Icon(Icons.search))
         ],
       ),
-      body: FutureBuilder<List<Kisiler>>(
-        future: kisileriYukle(),
-        builder: (context,snapshot){
-          if(snapshot.hasData){
-            var kisilerListesi = snapshot.data;
+      body: BlocBuilder <AnasayfaCubit,List<Kisiler>>(
+        builder: (context,kisilerListesi){
+          if(kisilerListesi.isNotEmpty){
             return ListView.builder(
-              itemCount: kisilerListesi!.length,
+              itemCount: kisilerListesi.length,
               itemBuilder: (context,indeks){//0,1,2
                 var kisi = kisilerListesi[indeks];
                 return GestureDetector(
                   onTap: (){
                     Navigator.push(context, MaterialPageRoute(builder: (context) =>  DetaySayfa(kisi: kisi)))
                         .then((value){
-                      print("Anasayfaya dönüldü");
+                      context.read<AnasayfaCubit>().kisileriYukle();
                     });
                   },
                   child: Card(
@@ -95,7 +95,7 @@ class _AnasayfaState extends State<Anasayfa> {
                                 action: SnackBarAction(
                                     label: "Evet",
                                     onPressed: (){
-                                      sil(kisi.kisi_id);
+                                      context.read<AnasayfaCubit>().sil(kisi.kisi_id);
                                     }),
                               ),
                             );
@@ -116,7 +116,7 @@ class _AnasayfaState extends State<Anasayfa> {
       floatingActionButton: FloatingActionButton(onPressed: (){
         Navigator.push(context, MaterialPageRoute(builder: (context) => const KayitSayfa()))
             .then((value){
-              print("Anasayfaya dönüldü");
+              context.read<AnasayfaCubit>().kisileriYukle();
         });
       },child: const Icon(Icons.add),),
     );
