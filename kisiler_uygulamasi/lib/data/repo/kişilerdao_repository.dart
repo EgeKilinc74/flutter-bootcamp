@@ -45,7 +45,6 @@ class KisilerDaoRepository{
   Future<void> sil(int kisi_id) async{
     var db = await VeritabaniYardimcisi.veritabaniErisim();
     await db.delete("kisiler", where: "kisi_id = ?",whereArgs: [kisi_id]);
-
   }
 
 }

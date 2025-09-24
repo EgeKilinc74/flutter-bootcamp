@@ -1,4 +1,3 @@
-import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
 
 import 'package:filmler_app/data/entity/fimler.dart';
 import 'package:filmler_app/ui/cubit/anasayfa_cubit.dart';
