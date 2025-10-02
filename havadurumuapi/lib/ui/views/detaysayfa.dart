@@ -10,7 +10,7 @@ class Detaysayfa extends StatefulWidget {
 }
 
 class _DetaysayfaState extends State<Detaysayfa> {
-  String apiKey = "975e63272d667ceb066bb411be27bfad";
+  String apiKey = "api";
   Map<String, dynamic>? veri;
   Dio dio = Dio();
 
